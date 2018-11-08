@@ -1,5 +1,5 @@
 # php-DbSyncEngine
-###php process to sync db tables
+### php process to sync db tables
 
 <p>
   DESCRIPTION<br/>
