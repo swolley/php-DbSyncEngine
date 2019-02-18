@@ -1,0 +1,27 @@
+{
+    "name": "swolley/php-db-syncer",
+    "type": "library",
+    "license": "MIT",
+    "repositories": {
+        "swolley/php-logger-client": {
+            "type": "vcs",
+            "url": "https://github.com/swolley/php-logger-client.git"
+        }
+    },
+    "authors": [
+        {
+            "name": "swolley",
+            "email": "myentity@inwind.it"
+        }
+    ],
+    "require": {
+        "swolley/php-logger-client": "master@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "Syncer\\": "/",
+            "Syncer\\Core\\": "core/",
+            "Syncer\\Maps\\": "maps/"
+        }
+    }
+}
