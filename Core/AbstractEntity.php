@@ -1,6 +1,9 @@
 <?php
 namespace Syncer\Core;
 
+use Swolley\Database\Interfaces\IConnectable;
+use Swolley\Database\DBFactory;
+
 abstract class AbstractEntity
 {	
 	/**
@@ -59,8 +62,8 @@ abstract class AbstractEntity
 	 */
 	public function findRows() : array
 	{
-		$from_conn = new Database($this->_fromDb);
-		$to_conn = new Database($this->_toDb);
+		$from_conn = (new DBFactory)($this->_fromDb);
+		$to_conn = (new DBFactory)($this->_toDb);
 
 		$this->_foundRows = [
 			'insert' => $this->getRowsToInsert($from_conn, $to_conn),
@@ -78,27 +81,27 @@ abstract class AbstractEntity
 
 	/**
 	 * filters rows to be inserted
-	 * @param 	Database	$fromConn	source datatabase connection object
-	 * @param 	Database	$toConn		destination datatabase connection object
+	 * @param 	IConnectable	$fromConn	source datatabase connection object
+	 * @param 	IConnectable	$toConn		destination datatabase connection object
 	 * @return	array 					found rows
 	 */
-	protected abstract function getRowsToInsert(Database &$fromConn, Database &$toConn) : array;
+	protected abstract function getRowsToInsert(IConnectable &$fromConn, IConnectable &$toConn) : array;
 
 	/**
 	 * filters rows to be updated
-	 * @param 	Database	$fromConn	source datatabase connection object
-	 * @param 	Database	$toConn		destination datatabase connection object
+	 * @param 	IConnectable	$fromConn	source datatabase connection object
+	 * @param 	IConnectable	$toConn		destination datatabase connection object
 	 * @return	array 					found rows
 	 */
-	protected abstract function getRowsToUpdate(Database &$fromConn, Database &$toConn) : array;
+	protected abstract function getRowsToUpdate(IConnectable &$fromConn, IConnectable &$toConn) : array;
 
 	/**
 	 * filters rows to be deleted
-	 * @param 	Database	$fromConn	source datatabase connection object
-	 * @param 	Database	$toConn		destination datatabase connection object
+	 * @param 	IConnectable	$fromConn	source datatabase connection object
+	 * @param 	IConnectable	$toConn		destination datatabase connection object
 	 * @return	array 					found rows
 	 */
-	protected abstract function getRowsToDelete(Database &$fromConn, Database &$toConn) : array;
+	protected abstract function getRowsToDelete(IConnectable &$fromConn, IConnectable &$toConn) : array;
 
 	/**
 	 * remaps and write changes to destination db
@@ -106,7 +109,7 @@ abstract class AbstractEntity
 	 */
 	public function syncRows() : array
 	{
-		$conn = new Database($this->_toDb);
+		$conn = (new DBFactory)($this->_toDb);
 		$errors = [];
 		return [
 			'insert' => $this->insertRows($conn, $errors),
@@ -160,10 +163,10 @@ abstract class AbstractEntity
 
 	/**
 	 * calls insert queries
-	 * @param	Database	$conn			datatabase connection object
+	 * @param	IConnectable	$conn			datatabase connection object
 	 * @return	int			$num_inserted	total num inserted
 	 */
-	protected function insertRows(Database &$conn) : int {
+	protected function insertRows(IConnectable &$conn) : int {
 		//if not exists a specified map structure, it will be setted to row fields
 		$num_inserted = 0;
 		if(count($this->_foundRows['insert']) === 0) {
@@ -190,10 +193,10 @@ abstract class AbstractEntity
 
 	/**
 	 * calls update queries
-	 * @param	Database	$conn			datatabase connection object
+	 * @param	IConnectable	$conn			datatabase connection object
 	 * @return	int			$num_updated	total num updated
 	 */
-	protected function updateRows(Database &$conn) : int {
+	protected function updateRows(IConnectable &$conn) : int {
 		//FIXME si rompe se non esiste _insertFieldsMap
 		//if not exists a specified map structure, it will be used the insert one
 		$num_updated = 0;
@@ -204,7 +207,7 @@ abstract class AbstractEntity
 		foreach($this->_foundRows['update'] as $cur) {
 			$mapped_row = $this->mapper($this->_updateFieldsMap, $cur);
 			
-			$where = array_map(function($value, $key) use($cur) {
+			$where = array_map(function($value) use($cur, $mapped_row) {
 				return "`{$value}`='{$mapped_row[$value]}'";
 			}, $this->_keysMap);
 
@@ -218,17 +221,18 @@ abstract class AbstractEntity
 
 	/**
 	 * calls delete queries
-	 * @param	Database	$conn			datatabase connection object
+	 * @param	IConnectable	$conn			datatabase connection object
 	 * @return	int			$num_deleted	total num deleted
 	 */
-	protected function deleteRows(Database &$conn) : int {
+	protected function deleteRows(IConnectable &$conn) : int {
 		$num_deleted = 0;
 		foreach($this->_foundRows['delete'] as $cur) {
 			$keys = array_map(function($value, $key) use($cur) {
 				return "`{$value}`='{$cur[$value]}'";
 			}, $this->_keysMap);
 
-			if($conn->delete($this->_toTable, join(" AND ", $keys))) {
+			//FIXME da sistemare la chiamata. adesso c'è quell'array vuoto
+			if($conn->delete($this->_toTable, join(" AND ", $keys), [])) {
 				$num_updated ++;
 			}
 		}

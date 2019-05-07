@@ -24,17 +24,19 @@ try {
 	///////////////////////// TIMESTAMPS //////////////////////////////////
 	date_default_timezone_set('UTC');
 	//set start execution
-	$start_timestamp = intval(time());	
+	$start_timestamp = intval(time());
 	//get last execution from file 'lastsync'
 	$last_exec_timestamp = intval(file_get_contents(LAST_SYNC_FILE));
 	////////////////////////// ENTITIES ///////////////////////////////////
 	//get maps classes
 	$entities = [];
-	foreach (glob(__DIR__ . '/maps/*.php') as $file) {
-		require_once $file;
-		$class_name = "Syncer\\Maps\\" . basename($file, '.php');
-		if (class_exists($class_name)) {
-			array_push($entities, new $class_name($dbs_conf));
+	foreach (glob(__DIR__ . '/Maps/*.php') as $file) {
+		if(basename($file) !== 'Map.example.php') {
+			require_once $file;
+			$class_name = "Syncer\\Maps\\" . basename($file, '.php');
+			if (class_exists($class_name)) {
+				array_push($entities, new $class_name($dbs_conf));
+			}
 		}
 	}
 	//////////////////////////// SYNC /////////////////////////////////////

@@ -4,21 +4,19 @@ define("SYNCER_LOG_FILENAME", '../logs/logs_syncer.log');	//don't change
 
 $dbs_conf = [
 	'fromDb' => [
-		'type' => 'mysql',
+		'driver' => 'mysql',
 		'host' => 'host',
 		'port' => 3306,
 		'user' => 'user',
-		'pass' => 'password',
-		'db' => 'dbname',
-		'dsn' => 'UFT8'
+		'password' => 'password',
+		'dbName' => 'dbname'
 	],
 	'toDb' => [
-		'type' => 'mysql',
+		'driver' => 'mysql',
 		'host' => 'host',
 		'port' => 3306,
 		'user' => 'user',
-		'pass' => 'password',
-		'db' => 'dbname',
-		'dsn' => 'UFT8'
+		'password' => 'password',
+		'dbName' => 'dbname'
 	]
 ];

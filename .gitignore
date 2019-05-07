@@ -1,2 +1,8 @@
 config.php
 maps.php
+logs/*
+vendor
+.vscode
+Maps/*
+!Map.example.php
+lastsync

@@ -64,7 +64,7 @@ class Syncer
 				. 'Inserted: ' . $detail['synced']['insert'] . ', '
 				. 'Updated: ' . $detail['synced']['update'] .', '
 				. 'Deleted: ' . $detail['synced']['delete'] .', '
-				. 'Duration: ' . ($detail['end'] - $detail['start']) . "s\t\t"
+				. 'Duration: ' . ($detail['end'] - $detail['start']) . "s "
 				. ($detail['found'] === $detail['synced'] ? '[OK]' : '[FAILED]')
 			);
 		}

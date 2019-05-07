@@ -3,9 +3,17 @@
     "type": "library",
     "license": "MIT",
     "repositories": {
+        "swolley/php-curl-extended": {
+            "type": "vcs",
+            "url": "https://github.com/swolley/php-curl-extended.git"
+        },
         "swolley/php-logger-client": {
             "type": "vcs",
             "url": "https://github.com/swolley/php-logger-client.git"
+        },
+        "swolley/php-db-extended": {
+            "type": "vcs",
+            "url": "https://github.com/swolley/php-db-extended.git"
         }
     },
     "authors": [
@@ -15,13 +23,15 @@
         }
     ],
     "require": {
-        "swolley/php-logger-client": "master@dev"
+        "swolley/php-curl-extended": "master@dev",
+        "swolley/php-logger-client": "master@dev",
+        "swolley/php-db-extended": "master@dev"
     },
     "autoload": {
         "psr-4": {
-            "Syncer\\": "/",
-            "Syncer\\Core\\": "core/",
-            "Syncer\\Maps\\": "maps/"
+			"Syncer\\": "/",
+			"Syncer\\Core\\": "Core",
+			"Syncer\\Maps\\": "Maps"
         }
     }
 }
